@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Italianoaj - Game</title>
+        <script src="scripts/three.min.js"></script>
+        <script src="scripts/physi.js"></script>
+        <script src="scripts/stats.js"></script>
+        <script src="scripts/game.js"></script>
+        <script src="scripts/player.js"></script>
+        <script src="scripts/target.js"></script>
+        <script src="scripts/rock.js"></script>
+        <script src="scripts/projectile.js"></script>
+        <script src="scripts/models/MTLLoader.js"></script>
+        <script src="scripts/models/OBJLoader.js"></script>
+        <script>
+            
+            window.onload = init;
+            
+            var instr="Controls: \n Arrow Keys = Move Player \n C = Toggle Camera  \n Right Shift = Jump \n Click = Select Rock  \n Escape = Deselect Rock \n WASD = Move Selected Rock";
+            window.alert(instr);
+            /**
+             * 
+             */
+            function init() {
+                
+                Physijs.scripts.worker = 'scripts/physijs_worker.js';
+                Physijs.scripts.ammo = 'ammo.js';
+                let stats=new Stats();
+                stats.showPanel(0);
+                document.body.appendChild(stats.dom);
+                let world=new World();
+                
+                let renderer = new THREE.WebGLRenderer();
+                renderer.shadowMap.enabled=true;
+                renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                document.body.appendChild( renderer.domElement );
+            
+                document.addEventListener('keydown',function(event) { world.keyDown(event)});
+                document.addEventListener('keyup',function(event) {world.keyUp(event)});
+                document.addEventListener('click',function(event) {world.click(event)});
+                
+                let clock = new THREE.Clock();
+                /**
+                 * 
+                 */
+                function animate() {
+                    world.scene.simulate();
+                    window.requestAnimationFrame( animate );
+                    stats.update();
+                    world.update(clock.getDelta());
+                    
+                    renderer.render(world.scene,world.camera);
+                }
+                // Allows the world to begin live play.
+                animate();
+            }
+        </script>
+    </head>
+    <body style="margin:0px;padding:0px;">
+    </body>
+</html>
